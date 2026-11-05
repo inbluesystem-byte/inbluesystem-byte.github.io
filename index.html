@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DTORDEN Basquet</title>
+  <meta name="description" content="Planificación de entrenamientos, plantel y citaciones para entrenadores de básquet.">
+  <meta name="theme-color" content="#0f1b2d">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Íconos (SVG sprite) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="1"/><path d="M8 21h8M12 18v3M7 9l3 3 4-4 3 3"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.3c2.1.7 3.5 2.8 3.5 5.7"/></symbol>
+      <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0V4zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 21h8M9 18h6"/></symbol>
+      <symbol id="i-logout" viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"/></symbol>
+      <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3h11l4 4v14H4V3h1zM8 3v5h8V3M7 13h10v8H7z"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6h7l2 2h9v11H3z"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="1"/><path d="M16 8V4H4v12h4"/></symbol>
+      <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></symbol>
+      <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 7L4 12l5 5M4 12h11a5 5 0 0 1 0 10h-3"/></symbol>
+      <symbol id="i-eraser" viewBox="0 0 24 24"><path d="M15 4l6 6-9 9H6l-3-3z"/><path d="M9 10l6 6M12 19h9"/></symbol>
+      <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+      <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3v18M5.6 5.6c3.2 3.2 3.2 9.6 0 12.8M18.4 5.6c-3.2 3.2-3.2 9.6 0 12.8"/></symbol>
+    </defs>
+  </svg>
+
+  <div id="progress" class="progress" hidden></div>
+
+  <!-- ============ PANTALLA DE CARGA ============ -->
+  <div id="splash" class="splash">
+    <svg class="splash-logo"><use href="#i-ball"/></svg>
+  </div>
+
+  <!-- ============ ACCESO ============ -->
+  <section id="auth" class="auth" hidden>
+    <div class="auth-brand">
+      <div class="auth-brand-inner">
+        <div class="logo-mark"><svg><use href="#i-ball"/></svg></div>
+        <h1 class="wordmark">DT<span>ORDEN</span></h1>
+        <p class="tagline">Planificación táctica, plantel y citaciones.<br>Todo tu equipo en un solo lugar.</p>
+      </div>
+    </div>
+
+    <div class="auth-panel">
+      <!-- Login -->
+      <form id="form_login" class="auth-form" autocomplete="on">
+        <h2>Ingresar</h2>
+        <p class="muted">Accedé con tu cuenta de entrenador.</p>
+        <label class="field"><span>Email</span><input type="email" id="login_user" autocomplete="username" required></label>
+        <label class="field"><span>Contraseña</span><input type="password" id="login_pass" autocomplete="current-password" required></label>
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+        <div class="auth-links">
+          <a href="#" data-goto="form_recuperar">¿Olvidaste tu contraseña?</a>
+          <a href="#" data-goto="form_registro" class="strong">Crear cuenta</a>
+        </div>
+        <p class="legal"><a href="privacidad.html" target="_blank" rel="noopener">Política de privacidad</a></p>
+      </form>
+
+      <!-- Registro -->
+      <form id="form_registro" class="auth-form" hidden>
+        <h2>Nuevo entrenador</h2>
+        <p class="muted">Completá tus datos para crear la cuenta.</p>
+        <label class="field"><span>Nombre y apellido</span><input type="text" id="reg_nombre" autocomplete="name" required></label>
+        <label class="field"><span>Email</span><input type="email" id="reg_email" autocomplete="email" required></label>
+        <label class="field"><span>Contraseña (mín. 6 caracteres)</span><input type="password" id="reg_pass" autocomplete="new-password" minlength="6" required></label>
+        <button type="submit" class="btn btn-primary btn-block">Crear cuenta</button>
+        <div class="auth-links"><a href="#" data-goto="form_login">Volver a ingresar</a></div>
+        <p class="legal">Al crear la cuenta aceptás la <a href="privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</p>
+      </form>
+
+      <!-- Recuperar -->
+      <form id="form_recuperar" class="auth-form" hidden>
+        <h2>Recuperar contraseña</h2>
+        <p class="muted">Te enviamos un código de 6 dígitos a tu email.</p>
+        <label class="field"><span>Email registrado</span><input type="email" id="recu_email" required></label>
+        <div id="recu_paso2" hidden>
+          <label class="field"><span>Código</span><input type="text" id="recu_codigo" inputmode="numeric" maxlength="6"></label>
+          <label class="field"><span>Nueva contraseña</span><input type="password" id="recu_pass" autocomplete="new-password" minlength="6"></label>
+        </div>
+        <button type="submit" id="recu_btn" class="btn btn-primary btn-block">Enviar código</button>
+        <div class="auth-links"><a href="#" data-goto="form_login">Volver a ingresar</a></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ APP ============ -->
+  <section id="app" class="app" hidden>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand"><svg><use href="#i-ball"/></svg><span>DT<b>ORDEN</b></span></div>
+        <nav class="tabs" role="tablist">
+          <button class="tab active" data-tab="pizarra" role="tab"><svg><use href="#i-board"/></svg><span>Pizarra</span></button>
+          <button class="tab" data-tab="plantel" role="tab"><svg><use href="#i-users"/></svg><span>Plantel</span></button>
+          <button class="tab" data-tab="citacion" role="tab"><svg><use href="#i-trophy"/></svg><span>Citación</span></button>
+        </nav>
+        <div class="user-box">
+          <span class="user-name" id="user_name"></span>
+          <button class="btn-icon" id="btn_cuenta" title="Mi cuenta"><svg><use href="#i-users"/></svg></button>
+          <button class="btn-icon" id="btn_logout" title="Cerrar sesión"><svg><use href="#i-logout"/></svg></button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- ---------- PIZARRA ---------- -->
+      <div id="view_pizarra" class="view active">
+        <div class="page-head">
+          <div>
+            <h1>Planificación de entrenamiento</h1>
+            <p class="muted">Dibujá hasta 7 ejercicios y generá el PDF para compartir.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-outline" id="btn_historial"><svg><use href="#i-folder"/></svg>Historial</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="grid-4">
+            <label class="field span-4-md"><span>Título del entrenamiento</span><input type="text" id="plan_titulo"></label>
+            <label class="field"><span>Día</span><input type="text" id="plan_dia" placeholder="Ej: Martes 12/11"></label>
+            <label class="field"><span>Hora</span><input type="text" id="plan_hora" placeholder="Ej: 19:00"></label>
+            <label class="field span-2"><span>Lugar</span><input type="text" id="plan_lugar"></label>
+          </div>
+        </div>
+
+        <div id="contenedor_bloques"></div>
+
+        <div class="card">
+          <div class="grid-2">
+            <label class="field"><span>Objetivos</span><textarea id="plan_objetivos" rows="4"></textarea></label>
+            <label class="field"><span>Observaciones</span><textarea id="plan_observaciones" rows="4"></textarea></label>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn btn-outline" id="btn_reset"><svg><use href="#i-reset"/></svg>Nuevo / Resetear</button>
+          <a class="btn btn-success" id="link_pdf" target="_blank" rel="noopener" hidden><svg><use href="#i-download"/></svg>Descargar PDF</a>
+          <button class="btn btn-primary" id="btn_guardar"><svg><use href="#i-save"/></svg>Guardar y generar PDF</button>
+        </div>
+      </div>
+
+      <!-- ---------- PLANTEL ---------- -->
+      <div id="view_plantel" class="view">
+        <div class="page-head">
+          <div>
+            <h1>Plantel</h1>
+            <p class="muted">Gestioná tus equipos, evaluá jugadores y tomá asistencia.</p>
+          </div>
+        </div>
+
+        <div class="card toolbar-card">
+          <label class="field grow"><span>Equipo</span>
+            <select id="sel_equipo"><option value="">Seleccioná un equipo…</option></select>
+          </label>
+          <div class="btn-row">
+            <button class="btn btn-outline" id="btn_nuevo_equipo"><svg><use href="#i-plus"/></svg>Nuevo equipo</button>
+            <button class="btn btn-dark" id="btn_asistencia"><svg><use href="#i-check"/></svg>Tomar asistencia</button>
+            <button class="btn btn-danger-outline" id="btn_del_equipo" title="Eliminar equipo"><svg><use href="#i-trash"/></svg></button>
+          </div>
+        </div>
+
+        <div id="lista_jugadores" class="players-grid"></div>
+        <div id="plantel_vacio" class="empty">Seleccioná o creá un equipo para ver sus jugadores.</div>
+
+        <button class="btn btn-primary btn-block" id="btn_agregar_jugador"><svg><use href="#i-plus"/></svg>Agregar jugador</button>
+      </div>
+
+      <!-- ---------- CITACIÓN ---------- -->
+      <div id="view_citacion" class="view">
+        <div class="page-head">
+          <div>
+            <h1>Citación de partido</h1>
+            <p class="muted">Elegí 12 citados y hasta 6 reservas. El plantel aparece ordenado por media.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="grid-4">
+            <label class="field"><span>Equipo</span><select id="sel_equipo_cita"><option value="">Seleccioná un equipo…</option></select></label>
+            <label class="field"><span>Fecha</span><input type="date" id="cita_fecha"></label>
+            <label class="field"><span>Rival</span><input type="text" id="cita_rival"></label>
+            <label class="field"><span>Lugar y dirección</span><input type="text" id="cita_lugar"></label>
+          </div>
+        </div>
+
+        <div class="grid-2 cita-cols">
+          <div class="card panel">
+            <div class="panel-head">Plantel <small>ordenado por media</small></div>
+            <div id="cita_disponibles" class="list"></div>
+          </div>
+          <div class="card panel">
+            <div class="panel-head">Convocados
+              <span class="counters"><span class="chip chip-green">Citados <b id="c_cita">0</b>/12</span><span class="chip chip-amber">Reservas <b id="c_res">0</b>/6</span></span>
+            </div>
+            <div id="cita_seleccionados" class="list"></div>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn btn-primary" id="btn_generar_cita"><svg><use href="#i-list"/></svg>Generar listado</button>
+        </div>
+        <div id="cita_reporte" class="card report" hidden>
+          <textarea id="reporte_cita_text" rows="14" readonly></textarea>
+          <div class="btn-row">
+            <button class="btn btn-outline" data-copy="reporte_cita_text"><svg><use href="#i-copy"/></svg>Copiar</button>
+            <button class="btn btn-outline" data-share="reporte_cita_text"><svg><use href="#i-share"/></svg>Compartir</button>
+            <button class="btn btn-dark" id="btn_txt_cita"><svg><use href="#i-download"/></svg>Descargar TXT</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ============ MODAL GENÉRICO ============ -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true">
+      <div class="modal-head"><h3 id="modal_title"></h3><button class="btn-icon dark" id="modal_close"><svg><use href="#i-x"/></svg></button></div>
+      <div class="modal-body" id="modal_body"></div>
+      <div class="modal-foot" id="modal_foot"></div>
+    </div>
+  </div>
+
+  <div id="toasts" class="toasts"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/pizarra.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

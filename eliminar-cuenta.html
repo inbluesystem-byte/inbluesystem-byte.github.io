@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Eliminar cuenta · DTORDEN</title>
+  <meta name="theme-color" content="#0f1b2d">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="progress" class="progress" hidden></div>
+  <header class="topbar"><div class="topbar-inner"><div class="brand"><svg viewBox="0 0 24 24" style="width:26px;height:26px;fill:none;stroke:#e8711a;stroke-width:1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3v18M5.6 5.6c3.2 3.2 3.2 9.6 0 12.8M18.4 5.6c-3.2 3.2-3.2 9.6 0 12.8"/></svg><span>DT<b>ORDEN</b></span></div></div></header>
+  <main class="main" style="max-width:520px">
+    <form id="f" class="card">
+      <h1 style="font-size:24px">Eliminar mi cuenta de DTORDEN</h1>
+      <p class="muted" style="margin-bottom:20px">Se borran para siempre tu usuario, tus equipos, jugadores, asistencias y entrenamientos. Esta acción no se puede deshacer.</p>
+      <label class="field"><span>Email de tu cuenta</span><input type="email" id="e" required autocomplete="username"></label>
+      <label class="field"><span>Contraseña</span><input type="password" id="p" required autocomplete="current-password"></label>
+      <label class="check-row" style="padding:8px 0;border:0"><input type="checkbox" id="c" required><span style="font-weight:400">Entiendo que mis datos se borran para siempre.</span></label>
+      <button class="btn btn-danger btn-block" type="submit" style="margin-top:12px">Eliminar cuenta</button>
+      <p id="msg" style="margin-top:16px;font-weight:600"></p>
+      <p class="legal">¿Olvidaste tu contraseña? Recuperala desde la app o escribinos a <a class="contacto" href="mailto:inbluesystem@gmail.com">inbluesystem@gmail.com</a>.</p>
+    </form>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    document.getElementById("f").addEventListener("submit", async function (ev) {
+      ev.preventDefault();
+      var msg = document.getElementById("msg"), btn = this.querySelector("button");
+      btn.disabled = true; msg.style.color = ""; msg.textContent = "Procesando…";
+      try {
+        var r = await api("eliminarCuenta", { usuario: document.getElementById("e").value.trim(), password: document.getElementById("p").value });
+        msg.textContent = r.msg; msg.style.color = r.success ? "#17744a" : "#c0392b";
+        if (r.success) { Sesion.borrar(); this.reset(); }
+      } catch (err) { msg.textContent = err.message; msg.style.color = "#c0392b"; }
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>
