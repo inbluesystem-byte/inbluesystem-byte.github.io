@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.inbluesystem.dtorden",
+        "sha256_cert_fingerprints": ["82:81:41:6F:93:3C:C4:E5:CA:AC:0A:20:4F:C4:55:F6:97:02:21:CA:4E:28:2D:5B:9F:62:44:D3:CE:35:9F:9D"]
+      }
+    }]
